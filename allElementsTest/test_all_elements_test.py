@@ -3,12 +3,13 @@ import time
 import pytest
 from playwright.sync_api import Playwright
 
-
+@pytest.mark.usefixtures("browser_settings")
 class AllElements:
-    def __init__(self,playwright:Playwright):
-        self.browser = playwright.chromium.launch(headless= False, args=["--start-maximized"])
-        self.context = self.browser.new_context(no_viewport= True)
-        self.page = self.context.new_page()
+    def __init__(self,page,context,browser):
+        self.page = page
+        self.context = context
+        self.browser = browser
+
 
     def elementscall(self):
         self.page.goto("https://testautomationsite.in/testelements.html")
@@ -62,40 +63,15 @@ class AllElements:
         assert "Successfully" in self.page.inner_text('body')
         self.page.reload(wait_until= "load")
 
-    def close(self):
-        self.browser.close()
+
 
 def handle_dialog(dialog):
         print(f"Dialog detected: {dialog.message}, Type: {dialog.type}")
         dialog.accept()
 
 @pytest.mark.regression
-def test_runner(playwright):
-    runner = AllElements(playwright)
+def test_runner(browser_settings):
+    page,context,browser = browser_settings
+    runner = AllElements(page,context,browser)
     runner.elementscall()
-    runner.close()
-
-@pytest.mark.regression
-def test_runner_2(playwright):
-    runner = AllElements(playwright)
-    runner.elementscall()
-    runner.close()
-
-@pytest.mark.regression
-def test_runner_3(playwright):
-    runner = AllElements(playwright)
-    runner.elementscall()
-    runner.close()
-
-@pytest.mark.regression
-def test_runner_4(playwright):
-    runner = AllElements(playwright)
-    runner.elementscall()
-    runner.close()
-
-@pytest.mark.regression
-def test_runner_5(playwright):
-    runner = AllElements(playwright)
-    runner.elementscall()
-    runner.close()
 
